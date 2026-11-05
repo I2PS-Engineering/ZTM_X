@@ -4,9 +4,7 @@
 
 ![ZTM Vanguard X fleet dashboard showing eight workers, controller activity and 14.98 kH/s cumulative hashrate](assets/gui/ztm-vanguard-x-fleet-demo.png)
 
-![ZTM Special Ops X Benchmark GUI showing an active processor benchmark, hashrate and live terminal](assets/gui/ztm-special-ops-x-benchmark-demo.png)
-
-*GUI demonstrations with simulated measurements and worker activity. The screens show the application layout; the displayed hashrates, shares and temperatures are illustrative, not live fleet measurements.*
+*ZTM Vanguard X GUI — demonstration with simulated worker activity and measurements. Hashrate, shares and temperatures shown here are illustrative, not live fleet measurements.*
 
 **I2PS Engineering**  
 *Different machines. Different capabilities. Same destination.*
@@ -200,3 +198,9 @@ ZTM application source and proprietary optimization components are **not open so
 
 **I2PS Engineering**  
 *Built in Morocco, Engineered in the future.*
+
+## ZTM Special Ops X GUI
+
+![ZTM Special Ops X Benchmark GUI showing an active processor Benchmark, simulated hashrate and live Terminal](assets/gui/ztm-special-ops-x-benchmark-demo.png)
+
+*ZTM Special Ops X GUI — active Benchmark demonstration with simulated hashrate, profile progress, share counters and Terminal activity. Not a live fleet measurement.*
