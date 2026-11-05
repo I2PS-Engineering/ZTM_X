@@ -1,6 +1,6 @@
 # ZTM X
 
-**ZTM X** is the unified fleet benchmarking and Mining ecosystem from **I2PS Engineering**. It brings together **ZTM Special Ops X**, the machine-level RandomX performance engine that measures processor, memory, cache and sustained workload behavior, and **ZTM Vanguard X**, the graphical controller that securely connects workers, starts authorized workloads, displays their live Terminal and Telemetry, and combines verified fleet statistics. Both applications run on Linux and macOS, and Mining is unlocked only after the server validates a qualified Benchmark report.
+**ZTM X** is the unified fleet benchmarking and Mining ecosystem from **I2PS Engineering**. It brings together **ZTM Special Ops X**, the machine-level RandomX performance engine that measures processor, memory, cache and sustained workload behavior, and **ZTM Vanguard X**, the graphical controller that securely connects workers, starts authorized workloads, displays their live Terminal and Telemetry, and combines verified fleet statistics. Both applications target Linux and macOS. The current **1.0.0 packages are engineering test candidates, not public releases**; the full qualifying macOS engine remains unfinished. Mining can unlock only after the server accepts a complete qualified Benchmark report **and** the client verifies a signed acceptance receipt bound to that worker and report.
 
 ![ZTM Vanguard X fleet dashboard showing eight workers, controller activity and 14.98 kH/s cumulative hashrate](assets/gui/ztm-vanguard-x-fleet-demo.png)
 
@@ -9,14 +9,34 @@
 **I2PS Engineering**  
 *Different machines. Different capabilities. Same destination.*
 
-| Application | Linux | macOS |
-| :--- | :---: | :---: |
-| **ZTM Special Ops X** | 1.0.0 | 1.0.0 · Developer ID signed and notarized |
-| **ZTM Vanguard X** | 1.0.0 | 1.0.0 · Developer ID signed and notarized |
+| Application | Linux 1.0.0 engineering candidate | macOS 1.0.0 engineering candidate |
+| :--- | :--- | :--- |
+| **ZTM Special Ops X** | Native engine + direct shell installer; field qualification pending | Full qualifying native engine and standalone app **not yet delivered** |
+| **ZTM Vanguard X** | Own embedded Linux engine; local checks passed, fleet test pending | RC2 native XMRig **provisional baseline only**; full optimizer and qualified-report path pending |
 
-macOS distribution uses Apple's **Direct Distribution** workflow. Linux packages install as native applications. Both are part of **ZTM X**—there is no separate third application called “ZTM X.”
+**ZTM X consists of these two applications, not a third standalone application.** The target macOS distribution is Developer ID signed and notarized through Apple's Direct Distribution workflow; the supplied November 5 Mac RC2 is **not** a signed/notarized finished 1.0.0 app.
+
+## Current development status
+
+**Engineering baseline: 5 November 2026.** This section distinguishes verified package behavior from target features still awaiting real-machine validation.
+
+| Area | Verified in the non-destructive Stage 1 audit | Still required |
+| :--- | :--- | :--- |
+| Linux Special Ops X | ZIP integrity, direct `install.sh --verify-only`, shell syntax | Actual installation, identity preservation, pairing, headless reboot, 24-hour Benchmark and receipt acceptance |
+| Linux Vanguard X | Bundles 44 native engine modules byte-identical to Linux Special Ops X; 12 focused tests passed | Real local Prepare/Start Benchmark/Stop, controller totals, remote GUI sync and fleet acceptance |
+| macOS Vanguard X RC2 | Consent-gated provisional XMRig baseline path; synthetic checks passed | Native Mac field run, local connection stability, complete optimizer and 24-hour qualification |
+| macOS Special Ops X | No complete 1.0.0 native engine or signed app in supplied artifacts | Implement or recover authoritative native build; then test, sign and notarize |
+| Validation service | Signed receipt remains the required authorization boundary | Verify live API 1.0.0 acceptance/allowlist and worker/report receipt verification |
+
+**Audit scope:** 125/125 master file hashes and all three application ZIP hashes matched; 84/84 current Python files parsed. The full Linux suite was **blocked at collection** because the audit interpreter lacked `asyncssh`; that is not a demonstrated product failure. No physical-machine performance, live API acceptance, signing or notarization was established by these offline checks.
+
+**Known issue ZTMX-001 (unfixed in these candidates):** Vanguard's local-controller client may fail to reconnect when an owner-owned Unix socket entry remains after the engine exits. A failed launch can also suppress a subsequent relaunch attempt in the same client instance. The condition was reproduced offline; whether it explains the earlier Mac field disconnect remains unconfirmed. The planned correction requires bounded recovery, owner/permission checks, duplicate-launch protection and Linux/macOS regression testing.
+
+Engineering builds and screenshots must not be presented as completed 24-hour qualifications or public releases. **Mining remains locked** on missing, provisional, rejected or unverified reports.
 
 ## Contents
+
+- [Current development status](#current-development-status)
 
 1. [Two applications, one system](#1-two-applications-one-system)
 2. [The engineering objective](#2-the-engineering-objective)
@@ -35,7 +55,9 @@ macOS distribution uses Apple's **Direct Distribution** workflow. Linux packages
 
 **ZTM Special Ops X** performs local hardware measurement, CPU topology analysis, RandomX/XMRig benchmarking, performance validation, supervised personal Mining, live telemetry and report generation. It can run with a desktop interface or as a managed background service.
 
-**ZTM Vanguard X** pairs with multiple Special Ops X workers, exposes their job status and metrics, starts/stops permitted workloads, and provides a graphical fleet overview, read-only Terminal output and Telemetry views. The controller can contribute its **own actual workload statistics** to fleet totals where a local engine is installed and reporting; a controller without an active engine is not credited with imaginary hashrate.
+**ZTM Vanguard X** pairs with multiple Special Ops X workers, exposes their job status and metrics, starts/stops permitted workloads, and provides a graphical fleet overview, read-only Terminal output and Telemetry views. It is also a **self-contained controller and local worker**: selecting its own node should offer hardware preparation, Start Benchmark, Stop and live local telemetry **without opening or installing a separate Special Ops X app**. The controller has its own permanent ZTM ID, and its actual local workload statistics contribute to fleet totals only while measured and reporting.
+
+The current **Linux Vanguard candidate** embeds the same 44 compiled native engine modules shipped with Linux Special Ops X; byte-for-byte parity is verified, while physical-machine functional parity remains to be tested. **macOS Vanguard RC2** embeds a consent-gated real-XMRig baseline adapter instead of the full Special Ops X optimizer. RC2 results remain **provisional** and cannot unlock Mining.
 
 Workers keep their own immutable **ZTM IDs**. Their human-readable display names can be changed independently.
 
@@ -60,7 +82,7 @@ The expanded [ZTM Special Ops engineering reference](https://github.com/I2PS-Eng
 
 Special Ops X detects the CPU and OS capabilities available to the actual process, examines CPU/thread topology and memory conditions, prepares supported XMRig features, and records what the machine **really** achieved. It does not silently treat a requested setting as an applied one.
 
-On Linux, where supported, the engine evaluates worker counts **and legal CPU-affinity placements**. CPU placement considers core and SMT siblings, shared caches, hybrid performance/efficiency cores, NUMA and available memory evidence. On macOS, it uses native scheduling; Linux-only CPU pinning and MSR claims are not transferred to macOS. **Mac Apple Silicon** follows its supported automatic configuration rather than claiming Intel-style optimization or Huge Pages capability.
+On Linux, where supported, the engine evaluates worker counts **and legal CPU-affinity placements**. CPU placement considers core and SMT siblings, shared caches, hybrid performance/efficiency cores, NUMA and available memory evidence. The **intended full macOS engine** uses native scheduling; Linux-only CPU pinning and MSR claims are not transferred to macOS. **Mac Apple Silicon** follows its supported automatic configuration rather than claiming Intel-style optimization or Huge Pages capability. The delivered macOS Vanguard RC2 is only a baseline adapter: it must not be described as implementing the full candidate search or qualified-report engine below.
 
 ### Discovery, comparison and endurance
 
@@ -144,9 +166,9 @@ The title reflects the platform:
 - **ZTM VANGUARD X | LINUX**
 - **ZTM VANGUARD X | macOS**
 
-The first screen uses a **graphical network topology**. The controller occupies the top node; connected worker cards appear beneath it in a flexible middle pane. The worker grid displays **up to four cards per row**, reflowing as the window changes size. The divider for the **CUMULATIVE FLEET** pane is draggable, so the operator can trade detail-panel width for more visible workers without clipping the controls.
+The first screen uses a **graphical network topology**. The controller occupies the top node; **when only one worker is paired, it appears directly below the controller with a connecting line**, not displaced to the side. Additional worker cards appear beneath it in a flexible middle pane, with **up to four cards per row** and responsive wrapping. The divider for the **CUMULATIVE FLEET** pane is draggable, so the operator can trade detail-panel width for more visible workers without clipping the controls.
 
-Each worker card shows its editable name, **immutable ZTM ID**, current status, actual hashrate and relevant accepted/rejected shares. Selecting a worker exposes its controls and its Terminal and Telemetry views. Use **Start Benchmark**, **Start Mining** (where authorized), and Stop actions; status text distinguishes **Benchmark**, **Mining**, **Idle**, **Offline** and unavailable measurements.
+Each worker card shows its editable name, **immutable ZTM ID**, current status, actual hashrate and relevant accepted/rejected shares. Selecting a worker exposes its controls and its Terminal and Telemetry views. Selecting the **controller** instead exposes its own local engine, Prepare, **Start Benchmark** and Stop controls, plus its real output and metrics; no second application should need to be opened. **Fleet Dashboard, Terminal, Telemetry and Reports stay as tabs within the same Vanguard window**, retaining the selected node instead of opening detached windows. **Start Mining** is available only where authorized. Status text distinguishes **Benchmark**, **Mining**, **Idle**, **Offline** and unavailable measurements.
 
 The cumulative panel combines the controller **when it is actually hashing** and all connected reporting workers. It presents total measured hashrate, accepted/rejected shares, Benchmark and Mining participation, Idle/Offline counts and live fleet state. Telemetry from missing or offline machines is excluded rather than silently treated as a measured zero. Benchmark and Mining activity are reported separately so totals do not imply that benchmark work is personal wallet Mining.
 
@@ -166,13 +188,25 @@ The authenticated control channel uses the restricted worker endpoint (default *
 
 ### Linux
 
-Install the native Linux package and complete worker preparation. **Background + Auto-start** allows the Special Ops X endpoint to run without a desktop GUI and return after reboot, including a boot without interactive login. Closing the GUI does not terminate the authorized worker service. **Automatic worker startup is not automatic Benchmark or Mining startup**: no workload begins merely because the machine rebooted.
+The current **Special Ops X 1.0.0 Ubuntu x86-64 candidate** ships as a ZIP with a direct **`install.sh` and precompiled payload—not a `.deb` package**. After extracting the application ZIP into its own directory, use:
 
-Vanguard X has its own Linux installation and can manage Linux and macOS workers through the supported paired interface.
+```bash
+cd ZTM-Special-Ops-X-1.0.0-Linux
+bash install.sh --verify-only  # validate without installing
+bash install.sh                # approved desktop installation
+```
+
+The installer also accepts `--headless` or `--desktop` for the applicable installation mode. It requires a supported Ubuntu environment and declared runtime dependencies; never replace an active Benchmark or unrelated mining process. The recent dependency correction uses **`polkitd` and `pkexec`**, not the unavailable transitional `policykit-1` package. Package verification passed; **installation on the affected field worker is still pending**.
+
+**Background + Auto-start** is designed to let the Special Ops X endpoint return after reboot without an interactive desktop session. Closing the GUI does not terminate the authorized worker service. **Worker startup is not automatic Benchmark or Mining startup**: after reboot, the endpoint should be available **Idle**, with no automatic hashing. Persistence and identity preservation remain field-test gates.
+
+Linux Vanguard X has its own installer and a bundled native controller engine. It can operate its own authorized local Benchmark without opening Special Ops X, and is designed to control separately paired Linux and macOS workers through the restricted endpoint; full fleet operation remains subject to field testing.
 
 ### macOS
 
-Both Special Ops X and Vanguard X are distributed for **macOS Intel and Mac Apple Silicon** through Apple's **signed and notarized Direct Distribution** workflow. Open the provided application/DMG through the standard macOS security flow, grant only the requested permissions and perform each app's native preparation. macOS uses supported OS scheduling and page behavior, never fabricated Linux-specific measurements.
+The target is **standalone macOS Intel and Mac Apple Silicon** builds of *both* applications, signed and notarized for Apple's **Direct Distribution** workflow. This is the **release objective**, not the status of the supplied 1.0.0 engineering ZIPs.
+
+The available **Vanguard X macOS 1.0.0 RC2** supplies a local architecture-selected, checksum-pinned XMRig **provisional baseline** adapter with explicit user consent. It is intended to Prepare/Start/Stop its own local supervised Benchmark and show actual Terminal/Telemetry in the same window, but those paths are **not field-verified on a Mac**. It does **not** provide the full native optimization engine, completed 86,400-second qualified-report pathway or Mining authorization. The current handoff includes **no complete macOS Special Ops X 1.0.0 app/Xcode project or signed/notarized Mac release**. Linux-specific affinity, MSR and Huge Pages claims are not transplanted to macOS.
 
 ### Upgrade and migration
 
@@ -182,7 +216,7 @@ The **installer** for each application detects recognized prior ZTM installation
 
 ZTM reports are structured processor research evidence, not merely a score or screenshot. Their hardware/topology, cache, memory, sustained hashrate, affinity, thermal and reliability measurements support the I2PS Dual-ISA Lab's physical-host research. This does not imply that the separate RISC-V/RTL/FPGA research pipeline automatically ingests these reports.
 
-Special Ops X submits the authorized report to the validation service. Eligibility remains fail-closed until the worker validates the signed server response for the same identity and report. Vanguard's view of an accepted job **does not replace** server-issued Mining authorization.
+Special Ops X submits the authorized report to the validation service. Eligibility remains fail-closed until the worker validates the signed server response for the same identity and report. Vanguard's view of an accepted job **does not replace** server-issued Mining authorization. The live server's acceptance of **1.0.0** reports and corresponding signed-receipt path have **not yet been verified** in this engineering baseline; no client may infer eligibility from local completion or an RC2 provisional report.
 
 Pairing stores persistent identities and trusted host-key information; network reporting involves the worker ID and hardware/benchmark metadata needed for validation. Personal Mining communicates with the selected pool and the public receiving address. Operators should protect exported reports, machine identifiers and remote-control credentials.
 
