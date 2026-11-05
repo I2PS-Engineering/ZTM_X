@@ -29,7 +29,7 @@ macOS distribution uses Apple's **Direct Distribution** workflow. Linux packages
 
 ## 1. Two applications, one system
 
-\`\`\`text
+```text
                               ZTM X
                   ┌─────────────────────────┐
                   │ ZTM VANGUARD X 1.0.0    │
@@ -54,7 +54,7 @@ macOS distribution uses Apple's **Direct Distribution** workflow. Linux packages
           and signed server receipts
                    │
           Authorized Mining unlock
-\`\`\`
+```
 
 **ZTM Special Ops X** performs local hardware measurement, CPU topology analysis, RandomX/XMRig benchmarking, performance validation, supervised personal Mining, live telemetry and report generation. It can run with a desktop interface or as a managed background service.
 
