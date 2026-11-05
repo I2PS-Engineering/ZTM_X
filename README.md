@@ -1,9 +1,15 @@
 # ZTM X
 
+**ZTM X** is the unified fleet benchmarking and Mining ecosystem from **I2PS Engineering**. It brings together **ZTM Special Ops X**, the machine-level RandomX performance engine that measures processor, memory, cache and sustained workload behavior, and **ZTM Vanguard X**, the graphical controller that securely connects workers, starts authorized workloads, displays their live Terminal and Telemetry, and combines verified fleet statistics. Both applications run on Linux and macOS, and Mining is unlocked only after the server validates a qualified Benchmark report.
+
+![ZTM Vanguard X fleet dashboard showing eight workers, controller activity and 14.98 kH/s cumulative hashrate](assets/gui/ztm-vanguard-x-fleet-demo.png)
+
+![ZTM Special Ops X Benchmark GUI showing an active processor benchmark, hashrate and live terminal](assets/gui/ztm-special-ops-x-benchmark-demo.png)
+
+*GUI demonstrations with simulated measurements and worker activity. The screens show the application layout; the displayed hashrates, shares and temperatures are illustrative, not live fleet measurements.*
+
 **I2PS Engineering**  
 *Different machines. Different capabilities. Same destination.*
-
-**ZTM X** is one ecosystem with two complementary applications: **ZTM Special Ops X** (the benchmark and Mining engine) and **ZTM Vanguard X** (the fleet controller). Each is available on **Linux** and **macOS**.
 
 | Application | Linux | macOS |
 | :--- | :---: | :---: |
@@ -28,33 +34,6 @@ macOS distribution uses Apple's **Direct Distribution** workflow. Linux packages
 ---
 
 ## 1. Two applications, one system
-
-```text
-                              ZTM X
-                  ┌─────────────────────────┐
-                  │ ZTM VANGUARD X 1.0.0    │
-                  │ Linux / macOS           │
-                  │ Graphical fleet control │
-                  │ Live cumulative totals  │
-                  └────────────┬────────────┘
-                      Paired and authenticated
-                        worker connections
-             ┌───────────┼───────────┐
-             │           │           │
-       ┌─────▼─────┐ ┌───▼───────┐ ┌─▼──────────┐
-       │ SPECIAL   │ │ SPECIAL   │ │ SPECIAL    │
-       │ OPS X     │ │ OPS X     │ │ OPS X      │
-       │ Worker A  │ │ Worker B  │ │ Worker C   │
-       │ Benchmark │ │ Mining    │ │ Idle       │
-       └─────┬─────┘ └───┬───────┘ └────────────┘
-             │           │
-             └─────┬─────┘
-                   ▼
-         Validated Benchmark reports
-          and signed server receipts
-                   │
-          Authorized Mining unlock
-```
 
 **ZTM Special Ops X** performs local hardware measurement, CPU topology analysis, RandomX/XMRig benchmarking, performance validation, supervised personal Mining, live telemetry and report generation. It can run with a desktop interface or as a managed background service.
 
