@@ -1,84 +1,126 @@
 # ZTM X
 
-**ZTM X** is the processor-performance research, benchmarking and fleet-management ecosystem developed by **I2PS Engineering**. It unites **ZTM Special Ops X**, the native machine-level measurement and supervised workload application, with **ZTM Vanguard X**, the graphical controller and independent local workload system. Both applications are designed for **Linux and macOS**.
+**Processor-performance research, sustained benchmarking and coordinated fleet operations**  
+**I2PS Engineering** · **Version 1.0.0** · Linux and macOS
 
-Its research foundation is the study of *sustained, measured performance* under actual hardware constraints—not brief peak numbers, generic CPU presets or unverified optimization claims. The approved engineering mathematics, methodology, physical-machine considerations and research evidence are retained in this README.
+ZTM X is a hardware-aware CPU research ecosystem developed by **I2PS Engineering**. It consists of two independently operable applications: **ZTM Special Ops X**, which characterizes a machine, measures its sustained performance, records telemetry and supervises permitted local workloads; and **ZTM Vanguard X**, which manages paired machines through a unified fleet interface and includes a local workload engine on the controller itself.
 
-![ZTM Vanguard X fleet dashboard showing controller, connected workers and illustrative workload measurements](assets/gui/ztm-vanguard-x-fleet-demo.png)
+The engineering objective is specific: determine what **each physical machine can sustain** under its actual CPU topology, cache, memory, thermal, scheduling and network constraints. Short-lived peak hashrate, a guessed thread count and a simulated dashboard value are not substitutes for qualified online evidence.
 
-*ZTM Vanguard X — interface demonstration with illustrative activity and measurements, not a live fleet measurement.*
+![ZTM Vanguard X controller and worker fleet dashboard, populated with illustrative sample measurements](https://raw.githubusercontent.com/I2PS-Engineering/ZTM_X/main/assets/gui/ztm-vanguard-x-fleet-demo.png)
 
-**I2PS Engineering**  
-*Different machines. Different capabilities. Same destination.*
+*Vanguard X interface illustration. Displayed activity is demonstrative, not a claim of field-tested fleet output.*
+
+> **Engineering test status — 8 November 2026:** Application packages and software test evidence are available for ZTM X 1.0.0. The independent 24-hour physical-hardware trial and macOS signing/notarization have **not** been completed. The figures in interface examples must not be reported as validated machine performance.
 
 | Application | Linux | macOS |
-| :--- | :--- | :--- |
-| **ZTM Special Ops X** | Native processor characterization, benchmark research, telemetry, reporting and authorized Mining | Native processor characterization, benchmarking and reporting with the **original ZTM Special Ops macOS native engine** |
-| **ZTM Vanguard X** | Graphical fleet controller with its own local native workload engine | Graphical fleet controller with its own local workload powered by the **original ZTM Special Ops macOS native engine** |
+|:--|:--|:--|
+| **ZTM Special Ops X** | Native worker application: hardware preparation, qualified benchmarking, six live chart families, report handling and authorization-gated Mining | Native macOS application: machine-level benchmarking, live reporting, research upload and authorization-gated Mining |
+| **ZTM Vanguard X** | Paired-worker fleet management **plus its own independent local engine** | Paired Linux-worker management **plus its own independent local engine** |
 
-**Two applications, one research ecosystem.** Vanguard manages paired workers but can also benchmark and perform permitted operations locally without opening Special Ops X on the controller machine.
+**One ecosystem, two applications, four platform packages.** Vanguard's local Benchmark does not require a separate Special Ops X installation or window. A paired worker remains identifiable and controllable regardless of whether the operator is viewing its own application or the Vanguard dashboard.
 
 ## Contents
 
-1. [Two applications, one system](#1-two-applications-one-system)
-2. [The engineering objective](#2-the-engineering-objective)
-3. [Special Ops X: Benchmark engine](#3-special-ops-x-benchmark-engine)
+1. [Architecture and application responsibilities](#1-architecture-and-application-responsibilities)
+2. [Physical-machine research methodology](#2-physical-machine-research-methodology)
+3. [Benchmark execution and evidence qualification](#3-benchmark-execution-and-evidence-qualification)
 4. [Approved mathematical research reference](#4-approved-mathematical-research-reference)
-5. [Special Ops X interface and Mining](#5-special-ops-x-interface-and-mining)
-6. [Vanguard X: fleet dashboard](#6-vanguard-x-fleet-dashboard)
-7. [Secure pairing and remote control](#7-secure-pairing-and-remote-control)
-8. [Background operation, installation and platform support](#8-background-operation-installation-and-platform-support)
-9. [Research reports, authorization and privacy](#9-research-reports-authorization-and-privacy)
-10. [Safety, contributions and licensing](#10-safety-contributions-and-licensing)
+5. [ZTM Special Ops X desktop interface](#5-ztm-special-ops-x-desktop-interface)
+6. [ZTM Vanguard X fleet interface](#6-ztm-vanguard-x-fleet-interface)
+7. [Network pairing and control boundaries](#7-network-pairing-and-control-boundaries)
+8. [Installation, runtime and platform behavior](#8-installation-runtime-and-platform-behavior)
+9. [Research reports, Mining authorization and privacy](#9-research-reports-mining-authorization-and-privacy)
+10. [Interpreting results and operating safely](#10-interpreting-results-and-operating-safely)
+11. [Distribution, contributions and license](#11-distribution-contributions-and-license)
+12. [Test packages and interface previews](#12-test-packages-and-interface-previews)
 
 ---
 
-## 1. Two applications, one system
+## 1. Architecture and application responsibilities
 
-**ZTM Special Ops X** performs local hardware measurement, CPU topology analysis, RandomX/XMRig benchmarking, performance validation, supervised personal Mining, live telemetry and report generation. It can run with a desktop interface or as a managed background service.
+ZTM X separates **measurement at the machine** from **oversight across the fleet**.
 
-**ZTM Vanguard X** pairs with multiple Special Ops X workers, exposes their job status and metrics, starts/stops permitted workloads, and provides a graphical fleet overview, read-only Terminal output and Telemetry views. It is also a **self-contained controller and local worker**: selecting its own node should offer hardware preparation, Start Benchmark, Stop and live local telemetry **without opening or installing a separate Special Ops X app**. The controller has its own permanent ZTM ID, and its actual local workload statistics contribute to fleet totals only while measured and reporting.
+```text
+                     ZTM VANGUARD X
+               Controller + local workload
+             Fleet | Terminal | Telemetry | Reports
+                              |
+                 Manually approved LAN pairing
+                              |
+          +-------------------+-------------------+
+          |                   |                   |
+   SPECIAL OPS X       SPECIAL OPS X       SPECIAL OPS X
+      Worker A             Worker B             Worker N
+   Local metrics        Local metrics        Local metrics
+   Local reports        Local reports        Local reports
+```
 
-On Linux, Special Ops X and Vanguard X use native workload engines suitable for their respective roles. On macOS, the **original ZTM Special Ops macOS native engine** provides the machine-level research foundation and is integrated into Vanguard X for its local workload. Both platforms retain their native operating-system constraints and capabilities.
+The diagram is conceptual; it does not imply that connected machines are automatically discovered or that every platform pairing combination is shipped in 1.0.0.
 
-Workers keep their own immutable **ZTM IDs**. Their human-readable display names can be changed independently.
+**ZTM Special Ops X** owns the machine-side research lifecycle: preflight inspection, hardware preparation where supported, workload supervision, benchmark trials, sustained validation, qualified research reports and explicitly authorized personal Mining. It presents local telemetry and can operate with a desktop session or, on Linux, in a managed background configuration.
 
-## 2. The engineering objective
+**ZTM Vanguard X** is the operator's fleet view. It remembers manually paired workers, shows their identity and observed state, presents permitted Start/Stop actions, and consolidates real measurements. **The controller is also a worker in its own right**: selecting it enables its local preparation and benchmarking controls without launching a second ZTM application. The controller contributes to fleet totals only while it is performing measured work.
 
-A bicycle, a motocross bike and a sport motorcycle do not take on the same hill with identical gearing, cooling and traction. CPUs differ just as materially in physical cores, SMT, cache, memory, Huge Pages, scheduling, thermal headroom and sustained throughput. ZTM X studies **what the actual machine can sustain**, not its brief peak.
+Every participating machine has a stable **ZTM ID**. The human-readable worker name may be edited without changing the underlying identity. Changes in network address do not create a new machine identity. Disconnected devices are identified as unavailable rather than silently counted as actively reporting workers.
 
-- **Engine** → CPU architecture and active hashing workers.
-- **Preparation** → RandomX dataset initialization, page allocation and supported memory/MSR setup.
-- **Grip** → thread placement, cache-sharing and memory efficiency.
-- **Road conditions** → thermal behavior, power limits and competing system activity.
-- **Endurance** → measured sustained online hashrate.
-- **Slope** → pool share difficulty (VarDiff), which affects share-submission frequency; merely raising VarDiff does not create more valid hashes or increase block-discovery probability.
+The research and control roles are deliberately distinct from the external report and authorization service. Dashboard telemetry remains a local operational concern; submission of a report is a separate, explicit action. The public documentation does not expose the server's protective authorization mechanisms.
 
-![Machine-specific performance: approved ZTM Special Ops motorcycle analogy](https://raw.githubusercontent.com/I2PS-Engineering/ZTM_SpecialOps/main/assets/figures/01-motorcycle-var-diff-whiteboard.png)
+## 2. Physical-machine research methodology
 
-The expanded [ZTM Special Ops engineering reference](https://github.com/I2PS-Engineering/ZTM_SpecialOps#readme) preserves the original mathematical definitions, example hardware measurements and diagrams. The methods below carry this research forward into the **Special Ops X** engine without treating historical machines as live fleet data.
+ZTM X treats processor tuning as a constrained physical experiment, not a universal preset. Two machines with the same CPU model may diverge because of memory rank and timing, channel configuration, thermal interfaces, firmware, power limits, background load or actual memory bandwidth and latency.
 
-## 3. Special Ops X: Benchmark engine
+The experiment evaluates factors such as:
 
-### Preparation and processor characterization
+| Measurement or constraint | Engineering significance |
+|:--|:--|
+| **Logical and physical topology** | Allowed CPUs, physical cores, SMT siblings, cache-sharing groups and, when exposed, performance/efficiency cores |
+| **Cache geometry** | Available L2/L3 capacity relative to RandomX per-worker working-set pressure |
+| **Memory capacity and access** | Available RAM, page allocation, measured copy-bandwidth proxy, pointer-chase latency and operating-system memory pressure |
+| **CPU placement** | Legal affinity/worker assignments and potential contention among siblings, cache domains and NUMA locality |
+| **Power and thermal state** | Sustainable operating conditions, thermal saturation and clock/power limitations over time |
+| **Pool and network state** | Readiness, work availability, share acceptance/rejection and interruptions that affect qualified observation |
+| **Operational stability** | Process failures, stop requests, missing sensors and interruptions recorded as events rather than hidden from results |
 
-Special Ops X detects the CPU and OS capabilities available to the actual process, examines CPU/thread topology and memory conditions, prepares supported XMRig features, and records what the machine **really** achieved. It does not silently treat a requested setting as an applied one.
+For a useful analogy, the CPU is the engine, memory access is traction, scheduling is the gear selection, cooling is endurance and pool difficulty is the slope: raising reported pool difficulty does not make a processor calculate more RandomX hashes per second.
 
-On Linux, where supported, the engine evaluates worker counts **and legal CPU-affinity placements**. CPU placement considers core and SMT siblings, shared caches, hybrid performance/efficiency cores, NUMA and available memory evidence. On Intel macOS, the **original ZTM Special Ops macOS native engine** uses native scheduling and supported processor optimization. Linux-specific CPU pinning and MSR behavior are not attributed to macOS. **Mac Apple Silicon** follows its supported automatic configuration rather than claiming Intel-style optimization or Huge Pages capabilities.
+![Machine-specific processor performance analogy from I2PS Engineering](https://raw.githubusercontent.com/I2PS-Engineering/ZTM_SpecialOps/main/assets/figures/01-motorcycle-var-diff-whiteboard.png)
 
-### Discovery, comparison and endurance
+### Platform-specific preparation
 
-The benchmark starts from XMRig's automatic reference configuration, evaluates a bounded set of hardware-motivated challengers when supported, and collects another reference measurement to reveal drift. The established engine framework has **at most seven full configurations**, with 600 qualified online seconds per full profile, after warm-up; Linux may use shorter affinity screens before full trials.
+**Linux** may evaluate legal CPU-affinity placements, physical/SMT grouping, cache-domain contention and supported memory preparation. Requested Huge Pages or privileged settings are distinguished from those actually applied; an unsupported or rejected operation is recorded as such.
 
-The evaluation measures XMRig's real hashrate, operational stability, accepted/rejected shares and available system telemetry. Share acceptance is a **quality gate**, not a multiplier that can make a slow configuration falsely appear fast. The selected winner is supported by recorded evidence and a confidence/tiebreak process; a statistical tie is reported rather than disguised as certainty.
+**Intel macOS** uses the macOS-native preparation and execution path. Linux-only affinity and MSR mechanisms are not represented as macOS features. **Mac Apple Silicon** uses its supported architecture-specific automatic benchmark path and is not labeled as having Intel-only optimization or unsupported memory-page controls. Platform comparisons must preserve these distinctions.
 
-The final endurance target is **86,400 qualified online seconds (24 hours)**. Offline time, unconfirmed pool activity, preparation and shutdown are not credited as online work. A 24-hour qualified benchmark may therefore take more than 24 hours of wall-clock time. An interrupted benchmark retains its evidence but cannot fabricate a completed qualification.
+### Controlled comparison
 
-### Measurements and reports
+A measurement is useful only when the environment and the metric are identifiable. ZTM X begins with the verified XMRig automatic reference configuration, evaluates physically motivated candidates within a bounded search and repeats reference observation to detect drift. The winning configuration is derived from measured evidence, not simply the first candidate to produce a high instantaneous reading.
 
-The local report records hardware identity, planner inputs, candidate profiles, affinity decisions where supported, memory/page preparation, trial measurements, winner evidence, qualified time, terminal events, stop reason and available telemetry. It is bound to the worker and machine. Missing temperature, RAM, latency, bandwidth or power data is shown as **unavailable**, never substituted with invented readings.
+Memory-copy and pointer-latency probes are **indicators**, not substitutes for observed RandomX throughput. Similarly, shares provide external quality evidence but do not turn share difficulty into hashrate. Observed sustained hashrate, measured stability and pool acceptance remain distinct dimensions of the result.
 
-The six familiar live chart families are **CPU temperature, CPU usage, RAM usage, hashrate, pool VarDiff and share activity**, with event markers and a rolling measurement window. The worker GUI and Vanguard's remote views use the **real active workload state**, whether a session began on the worker or was started remotely.
+## 3. Benchmark execution and evidence qualification
+
+### From preflight to candidate selection
+
+The benchmark workflow proceeds through **machine inspection, reference configuration, bounded candidate trials, comparison and endurance validation**. It establishes the available machine capabilities before making a performance claim. Unsupported preparation features, denied permissions or missing probes are kept visible as limitations.
+
+The established trial framework evaluates **no more than seven full configurations**, with a target of **600 qualified online seconds per full candidate after warm-up**. Linux may also conduct shorter legal-affinity screens before a candidate proceeds to full evaluation. Candidate construction considers the available cores, cache budgets, worker count, initialization count, memory conditions and permitted placement topology.
+
+Each qualifying trial records actual XMRig work and a reason for accepting or excluding the observation. A repeat of the reference profile helps separate changing environmental conditions from a genuine improvement. When results are too close to resolve, the result remains a practical tie or invokes additional comparison; it is not forced into a false winner.
+
+### Qualified online time
+
+The endurance target is **86,400 qualified online seconds (24 hours)**. This is not automatically equivalent to 24 hours of wall-clock runtime. Preparation, dataset initialization, disconnected periods, unconfirmed pool work, paused operation and shutdown are not represented as productive online time.
+
+A benchmark that has run for 24 wall-clock hours may still be incomplete if it accumulated fewer than 86,400 qualified seconds. A stopped or interrupted run retains its research evidence and actual stop reason but cannot be marked as fully qualified through a displayed elapsed-time counter alone.
+
+The user-facing progress indicator must distinguish **qualified progress** from preparation or other provisional elapsed time. A full research record supports later comparison of online measurement, candidate trial accounting and sustained-run evidence.
+
+### Statistical evaluation and reporting
+
+The measurement method emphasizes robust summaries over single peak values. Qualified trials use hashrate samples, variability estimates, drift controls and statistical comparison where sufficient evidence exists. When candidates remain close, a paired **A–B–B–A** comparison can help expose time-dependent environmental effects.
+
+The workflow preserves the distinction among **best observed instantaneous hashrate**, **candidate trial summary**, **selected configuration**, and **qualified sustained result**. These are different facts and must not be merged into one unsupported performance claim.
 
 ## 4. Approved mathematical research reference
 
@@ -144,97 +186,181 @@ For qualified comparable trials, the research uses robust summaries of 10-second
 
 Memory copy bandwidth, pointer-chase latency, configured DDR speed, cache geometry, CPU topology, Huge Pages availability and Linux memory pressure are distinct measurements or priors, not interchangeable with effective RandomX hashrate. **Unavailable** means unavailable: neither a missing sensor nor a requested feature is recorded as a measured success. Performance conclusions rely on measurements from the actual machine under the applicable workload.
 
-## 5. Special Ops X interface and Mining
+## 5. ZTM Special Ops X desktop interface
 
-The desktop app groups the workflow into **ONGOING**, **PROFILE RESULTS**, **FINAL RESULTS**, and **MINING**. It provides preparation, authorization, **Start Benchmark**, **Stop**, profile/telemetry charts, report review and eligibility-gated Mining. There is **one Mining area**, not a separate wallet creation or wallet recovery tool.
+ZTM Special Ops X presents four principal areas: **ONGOING**, **PROFILE RESULTS**, **FINAL RESULTS** and **MINING**. The workflow covers local preparation, a visible **Start Benchmark** action, active operation, progress checkpoints, Stop, report review and personal Mining where explicitly permitted. There is **no separate wallet-generation or wallet-recovery tab**.
 
-**Personal Mining is available only with valid authorization.** A local Benchmark, a submitted report or an accepted research result does not independently authorize Mining. The application enforces authorization requirements without exposing protective implementation details in this public documentation.
+- **ONGOING** reports the live phase, permitted controls, elapsed and qualified progress, relevant preparation state and important stop/transition events.
+- **PROFILE RESULTS** shows candidate-level evidence, the current profile, event markers and synchronized technical charts.
+- **FINAL RESULTS** separates a completed qualified result from an incomplete or interrupted research run, with measurable evidence and available report details.
+- **MINING** presents the authorization state and, when eligible, explicit Start Mining/Stop actions with an operator-supplied **public receiving address**. An unavailable authorization is not bypassed by a completed local Benchmark.
 
-When authorized, personal Mining requires a **public Monero receiving address** and explicit consent. ZTM X never requests or stores wallet recovery seed phrases or private keys; wallet resources are linked from the official [Monero site](https://www.getmonero.org/). Benchmark and personal Mining never execute concurrently on one worker.
+The application displays its **1.0.0 version, build identifier and code fingerprint** through the supported title triple-click interaction. The layout adapts to screen DPI and available display area. Telemetry comes from the active supervised workload; remotely triggered jobs must not leave the local interface showing an unrelated idle state.
 
-The title supports a **triple-click** to display the application's **1.0.0 version, build code and code fingerprint**. Both apps adapt their layouts and DPI scaling to the display.
+### Six live chart families
 
-### Shared GUI charts and event annotations
+The chart window shares a rolling **15-minute timeline**, where supported, with event annotations at actual state changes.
 
-The **six synchronized live charts** share a rolling **15-minute** clock in the Profile Results view:
+| Chart | Intended visual treatment | Interpretation |
+|:--|:--|:--|
+| CPU temperature | Orange | Actual available temperature sensor measurements; otherwise **unavailable** |
+| CPU usage | Yellow | Observed system-wide CPU utilization |
+| RAM usage | Red | Actual system RAM usage; not silently substituted with an invented process-memory reading |
+| Hashrate | Green | Observed online XMRig throughput; disconnected or unmeasured intervals identified distinctly |
+| Pool VarDiff | Violet | The pool's reported share-difficulty behavior; not a multiplier for local hashing speed |
+| Share activity | Accepted green, rejected red | Cumulative share counts and associated state changes, with no fabricated discontinuities |
 
-| Chart | Display / data policy |
-|---|---|
-| CPU temperature | Orange; available OS temperature sensor readings only |
-| CPU usage | Yellow; observed system-wide CPU usage |
-| RAM usage | Red; Linux charts display system RAM, not a fabricated XMRig RSS figure |
-| Hashrate | Green; pool-connected XMRig hashrate, with unmeasured periods distinguished from zero |
-| Pool VarDiff | Violet; normal pool difficulty, with XMRig donation intervals clearly marked |
-| Share activity | Accepted shares green, rejected shares red; cumulative curves continue through intervals with no new share rather than breaking |
+Markers may denote a profile transition, affinity-screen decision, permitted runtime change, donation interval, validated winner or interruption. A trophy/winner marker identifies a selection event; **it is not, by itself, proof of 24-hour qualification**. Unknown or unsupported readings are shown as unavailable rather than interpolated as facts.
 
-Charts include actual profile-change markers and available event explanations; relevant affinity screening, transitions and donation intervals are distinguished. Missing telemetry remains **unavailable**, never silently interpolated into a measured value. The winning-profile trophy/validation indicator is an event cue, **not** independent proof of benchmark qualification.
+## 6. ZTM Vanguard X fleet interface
 
-## 6. Vanguard X: fleet dashboard
+Vanguard X exposes a fleet dashboard, in-window operational tabs and the controller's native local workload. Its platform-specific title is **ZTM VANGUARD X | LINUX** or **ZTM VANGUARD X | macOS**.
 
-The title reflects the platform:
+### Topology-first dashboard
 
-- **ZTM VANGUARD X | LINUX**
-- **ZTM VANGUARD X | macOS**
+The controller appears at the top of the topology. With **one paired worker**, that worker appears **directly underneath the controller**, joined by a connecting line. With more workers, the central pane wraps cards responsively with **up to four workers per row**. A resizable divider separates the fleet topology from the **CUMULATIVE FLEET** pane, allowing operators to adjust the information density without hiding core actions.
 
-The first screen uses a **graphical network topology**. The controller occupies the top node; **when only one worker is paired, it appears directly below the controller with a connecting line**, not displaced to the side. Additional worker cards appear beneath it in a flexible middle pane, with **up to four cards per row** and responsive wrapping. The divider for the **CUMULATIVE FLEET** pane is draggable, so the operator can trade detail-panel width for more visible workers without clipping the controls.
+A node card identifies the device by its editable display name and immutable **ZTM ID**, and reports available job status, observed hashrate and share counts. The current state is clearly marked as **Benchmark**, **Mining**, **Idle**, **Offline** or measurement unavailable; a disconnected worker is not treated as actively hashing.
 
-Each worker card shows its editable name, **immutable ZTM ID**, current status, actual hashrate and relevant accepted/rejected shares. Selecting a worker exposes its controls and its Terminal and Telemetry views. Selecting the **controller** instead exposes its own local engine, Prepare, **Start Benchmark** and Stop controls, plus its real output and metrics; no second application should need to be opened. **Fleet Dashboard, Terminal, Telemetry and Reports stay as tabs within the same Vanguard window**, retaining the selected node instead of opening detached windows. **Start Mining** is available only where authorized. Status text distinguishes **Benchmark**, **Mining**, **Idle**, **Offline** and unavailable measurements.
+### Controller operates independently
 
-The cumulative panel combines the controller **when it is actually hashing** and all connected reporting workers. It presents total measured hashrate, accepted/rejected shares, Benchmark and Mining participation, Idle/Offline counts and live fleet state. Telemetry from missing or offline machines is excluded rather than silently treated as a measured zero. Benchmark and Mining activity are reported separately so totals do not imply that benchmark work is personal wallet Mining.
+Selecting the **controller card** exposes that machine's own Prepare, **Start Benchmark**, Stop, local output and telemetry. It can execute its supported research workload and report measured values without launching Special Ops X separately. Its activity contributes to cumulative fleet statistics when it is actually reporting verified operational measurements. Its idle or offline periods do not produce simulated hashrate.
 
-The **Terminal** presents read-only supervised engine output, **not** an unrestricted SSH shell. **Telemetry** provides live measurements and charts for the selected worker, with appropriately marked missing sensors and interruptions. The remote GUI mirrors the workload's actual state if the job is started from Vanguard.
+Selecting a **paired worker** changes the action and telemetry context to that worker. A Start Benchmark initiated from Vanguard is reflected in the worker's live state. Actions must preserve the same workload and authorization boundaries used by the worker's own interface.
 
-## 7. Secure pairing and remote control
+### Integrated operational views
 
-In Special Ops X, the operator makes the worker available for approved pairing. In Vanguard X, **Pair by address…** connects to a selected worker on the local network without automatic device broadcasts or discovery. The operator reviews the pairing request, confirms the intended machine and approves access.
+**Fleet Dashboard**, **Terminal**, **Telemetry** and **Reports** are tabs in the **same Vanguard window**, not detached windows. They retain the selected node and expose the permitted information relevant to that node.
 
-Connected nodes retain their identity and a human-readable name. Vanguard exposes only permitted workload actions and read-only operational views; its Terminal is not an unrestricted remote shell. Remote Start/Stop respects the same authorization and workload-state restrictions as the local application. Security-sensitive pairing, authentication and anti-tampering mechanisms are deliberately not documented here.
+- **Terminal** provides read-only supervised application output, **not** an unrestricted operating-system command shell.
+- **Telemetry** provides the selected node's currently available measurements and charts, including gaps and sensor limitations.
+- **Reports** presents the relevant local or received research evidence and its status without turning an incomplete trial into a qualified report.
+- **CUMULATIVE FLEET** sums actually reported, eligible measurements; controller and worker Benchmark/Mining participation are differentiated so the total is not mistaken for one uniform wallet-Mining session.
 
-## 8. Background operation, installation and platform support
+No static number from an illustrative dashboard is a measured fleet result.
 
-### Linux
+## 7. Network pairing and control boundaries
 
-**ZTM Special Ops X** provides a native Linux benchmarking and Mining application with a desktop interface, supported background operation, supervised workload control and a shell-based installation path. **ZTM Vanguard X** provides the fleet interface and its own independently operable local workload engine.
+ZTM Vanguard X uses **Pair by address…**: the operator enters a known local-network address shown by an enabled worker. The design does **not** depend on mDNS broadcasts or automatic discovery of every machine on the LAN. Existing LAN and Wi-Fi workers can be represented in the same dashboard after their approved pairing; static IP assignment is not a prerequisite to the initial workflow.
 
-Background availability does not imply permission to start hashing automatically. Workloads remain explicitly controlled. Installations and upgrades are intended to preserve worker identity, research reports and authorized connection settings while respecting existing workloads and unrelated software.
+For **Linux Special Ops X 1.0.0**, the operator enables Vanguard pairing at the worker, reads its advertised address, starts pairing from Vanguard and confirms the displayed matching code. The worker's local authorization step remains necessary; access is not granted merely because a network endpoint answered. Supported preparation operations may require an administrator confirmation.
 
-### macOS
+Once paired, Vanguard remembers the worker's identity and approved connection. It offers only the workload actions and read-only operational views defined by the application; **pairing does not provide a general-purpose remote shell**. Start/Stop, current-state reporting and Mining eligibility follow the same rules regardless of whether control was initiated locally or remotely.
 
-**ZTM Special Ops X** brings its **original ZTM Special Ops macOS native engine** to the macOS application. **ZTM Vanguard X** integrates the same native engine for its local workload while adding fleet control, Terminal and Telemetry views.
+**Release boundary:** In 1.0.0, direct pairing is supported for **Linux Special Ops X workers**. Pairing a macOS Special Ops X worker to Vanguard X is **not included** in this testing build. On macOS, Vanguard X still provides its **own** local workload and supported fleet management of paired Linux workers.
 
-Intel macOS and Mac Apple Silicon follow their respective supported architecture-specific paths. Mac Apple Silicon is not represented as having Intel-only optimization capabilities. Platform-specific preparation, permissions, and available hardware measurements are handled according to the host machine.
+## 8. Installation, runtime and platform behavior
 
-### Distribution and upgrade integrity
+### Linux — shell-based applications
 
-ZTM X consists of **two applications on two platforms**. Official installation packages, verification information, compatibility requirements and distribution instructions accompany their respective release assets when published. This README does not claim that a separate software release has already been published.
+The Linux packages distribute an **`install.sh` installer**, not a Debian `.deb` application package. The Special Ops X target is Ubuntu Linux x86-64 with Python 3.10 or later and the required OS/runtime dependencies. Installation and live benchmark use require network access as described in the bundled platform notes.
 
-Existing machine identity and locally retained research records are preserved through supported application upgrades. Software is not replaced or removed solely because an unrelated file resembles a ZTM component.
+From the extracted **ZTM Special Ops X Linux** package:
 
-## 9. Research reports, authorization and privacy
+```bash
+bash install.sh --verify-only
+bash install.sh --desktop
+```
 
-ZTM X reports are structured hardware-research records, not merely benchmark scores or screenshots. Depending on the hardware and platform, they may include processor topology, cache organization, memory measurements, observed workload results, affinity evidence where supported, thermal and stability telemetry, qualification status and documented interruptions.
+For a worker without a desktop session, the corresponding mode is:
 
-Results are associated with the participating machine. Benchmarking and personal Mining are distinct operations. **Valid server-issued authorization is required for Mining**, irrespective of whether a Benchmark was completed locally or its report was accepted for research. Protective authorization, heartbeat and anti-tampering internals are not part of this public engineering reference.
+```bash
+bash install.sh --headless
+```
 
-Personal Mining uses an operator-supplied **public receiving address**. Recovery phrases and private wallet keys are not required by ZTM X. Operators should safeguard their exported reports, machine identifiers and remote-access credentials.
+The regular installer may also be run as `bash install.sh`. The verification-only mode checks the supplied package without performing installation. The installer uses the host package manager only where needed for system dependencies and recognized predecessor installations; it does **not** install ZTM X itself through a `.deb` artifact.
 
-The research described here supports physical-host CPU and memory investigations. It does not imply that all measured data automatically feeds a separate RISC-V, RTL or FPGA research pipeline.
+The installed worker can be launched from the desktop menu or with `ztm-special-ops`. Headless pairing is available through the installed `ztm-worker` command. Background operation and optional restart after reboot are managed explicitly; **installation or reboot must not silently start Benchmark or Mining**.
 
-## 10. Safety, contributions and licensing
+**ZTM Vanguard X Linux** has its own installer and native local engine. It does not require starting the Special Ops X desktop application before the controller can benchmark itself.
 
-Continuous CPU work consumes electricity, raises temperature and can shorten hardware life if cooling is inadequate. Use it only on systems you own or are authorized to operate. ZTM X does not guarantee earnings, overclock the CPU, fabricate sensor readings, assume Huge Pages allocation or terminate unrelated processes. **Stop** ends the supervised workload and preserves the stop reason without falsely granting 24-hour qualification.
+### macOS — separate applications and native local engines
 
-The established ZTM Special Ops contribution framework discloses **1% scheduled runtime for I2PS Engineering** during personal Mining, separately from XMRig's independent **1% upstream developer contribution**. Scheduled time is not an exact percentage of shares or earnings. Pool work during the explicitly authorized Benchmark uses the disclosed research/development receiving address.
+The two macOS ZIPs provide **ZTM Special Ops X** and **ZTM Vanguard X** as independent applications, each using the supported native macOS workload path. The packaged installer accepts:
 
-ZTM application source and proprietary optimization components are **not open source**. Public use is subject to I2PS's noncommercial license and the terms supplied with the application. Third-party dependencies, including **XMRig (GPLv3)**, retain their own licenses and notices. No distribution of proprietary ZTM X source is implied by this repository's documentation.
+```bash
+./install.sh --verify-only
+./install.sh
+```
+
+Follow the individual kit's prerequisites and macOS permission prompts. **Intel macOS** and **Mac Apple Silicon** use their supported architecture-specific research behavior. An Apple Silicon automatic baseline must not be described as an Intel count/affinity optimization. Available hardware sensors and system privileges can differ between machines.
+
+The macOS packages in this handoff are **engineering test kits**. They are **not yet signed or notarized** release distributions. Installation and physical qualification must not be represented as already completed.
+
+### Identity, upgrades and integrity
+
+An installation should preserve the machine's stable ZTM ID, existing research records, consent state, approved pairing data and applicable local settings. Installer integrity verification uses the included SHA-256 checksums; **a checksum alone does not establish publisher authenticity**. A recognized predecessor installation may be retired only through the installer's controlled upgrade path, without arbitrary removal of unrelated software.
+
+Never upgrade or replace a package over an active, supervised Benchmark or Mining run. The software build and any report should remain traceable to their actual version and machine identity.
+
+## 9. Research reports, Mining authorization and privacy
+
+### Research evidence
+
+A ZTM X report is a structured machine-research record. Subject to hardware capabilities and availability, it can contain:
+
+| Evidence class | Typical contents |
+|:--|:--|
+| Machine context | Stable ZTM ID, platform, available CPU topology, hardware characteristics and relevant capabilities |
+| Preparation | Supported setup, observed page/memory state, successful and unsuccessful prerequisites |
+| Candidate research | Reference measurements, candidate profiles, eligible worker/placement decisions and actual sample statistics |
+| Endurance | Qualified online seconds, measured sustained throughput, interruptions and completion state |
+| Operational quality | Available accepted/rejected shares, pool status, event journal and observed workload stability |
+| Environment | Available thermal, CPU and RAM measurements, with missing fields explicitly marked unavailable |
+
+A local report is **not** an authorization token. **Personal Mining requires a current, valid I2PS authorization** and compliance with the application’s qualification conditions. A fresh ZTM X benchmark and any required research submission are separate from the final authorization decision; a result or screenshot alone does not unlock Mining.
+
+### User control and personal Mining
+
+Personal Mining requires explicit user action, consent and an operator-supplied **public Monero receiving address**. No wallet recovery phrase or private key is requested. Benchmark and personal Mining must not operate concurrently on the same machine. An authorization refusal, unavailable required condition or a user Stop action is not reinterpreted as a permission to continue.
+
+A research upload occurs through the application's documented consent flow. Fleet operational telemetry is distinct from report submission. Only the applicable research fields should be sent, and information that the platform cannot measure is not fabricated. Machine IDs, reports and permitted connection credentials should be handled as potentially sensitive operational information.
+
+The public README documents **what the operator can verify and control** without disclosing private server implementation details.
+
+## 10. Interpreting results and operating safely
+
+**Measured** means collected on the actual machine during an observed workload. **Illustrative** means a GUI sample or explanatory figure. **Provisional** means the evidence is not yet sufficient for a final endurance claim. **Unavailable** means the relevant sensor or measurement did not provide trustworthy data.
+
+A technical comparison should document CPU model and topology, memory capacity/configuration, RAM-performance evidence when available, cooling and ambient conditions, operating-system state, thread configuration, online measurement window and interruptions. Comparing peak values from unequal sessions is not a reproducible engineering result.
+
+Sustained CPU workloads increase energy consumption and heat. Operate only on machines you own or are expressly authorized to test, with adequate cooling and ventilation. ZTM X does not guarantee mining revenue, hardware improvement, reduced power consumption or that requested privileged optimizations can be applied on every machine.
+
+An incomplete run stays incomplete. A failed sensor remains unavailable. A pool disconnect is not credited as qualified online work. Stopping a supervised workload must preserve the applicable stop reason and research evidence without granting qualification by inference.
+
+### Present qualification boundary
+
+**ZTM X 1.0.0 is awaiting the first complete physical 24-hour qualification cycle.** Packaged test reports and software checks establish implementation evidence, not a guaranteed sustained hashrate on a particular CPU. No result in an illustrative screenshot should be cited as the completed hardware baseline for this release.
+
+## 11. Distribution, contributions and license
+
+ZTM X application code, the machine-specific performance research and the proprietary optimization components are **I2PS Engineering** work. The applications are **proprietary, not open source**, and their distribution and permitted use are subject to the accompanying **I2PS Engineering noncommercial license**. Availability of this README or of a test package does not grant rights to redistribute, modify or commercially exploit proprietary source.
+
+For expressly permitted personal Mining, the documented contribution schedule uses **1% of runtime for I2PS Engineering**, separately from the **1% XMRig contribution configured in the mining runtime**. A runtime allocation is not a guaranteed percentage of accepted shares or income. The Benchmark's disclosed research destination is different from a user's personal Mining receiving address.
+
+The presence of interoperable third-party runtimes or dependencies does not transfer ownership of those components to I2PS Engineering or override licenses applicable to those components. Distribution packages must preserve any notices required by their respective licenses. **The authorship and project credit for ZTM X belong exclusively to I2PS Engineering.**
+
+## 12. Test packages and interface previews
+
+The handoff contains these **four testing packages**; listing them does not assert they have been published as a public release:
+
+| Archive | Scope |
+|:--|:--|
+| `ZTM-Special-Ops-X-1.0.0-Linux.zip` | Linux worker, native engine, shell installer |
+| `ZTM-Vanguard-X-1.0.0-Linux.zip` | Linux fleet controller and independent local engine |
+| `ZTM-Special-Ops-X-1.0.0-macOS.zip` | macOS worker application and native workload engine |
+| `ZTM-Vanguard-X-1.0.0-macOS.zip` | macOS fleet controller and independent native local engine |
+
+The documented version identifier is **ZTM X 1.0.0**. Build identifiers and SHA-256 package digests should be distributed alongside the corresponding packages; they must refer to the exact files released, not an earlier or independently modified build.
+
+### ZTM Special Ops X interface
+
+![ZTM Special Ops X Benchmark screen with illustrative processor profiles and telemetry](https://raw.githubusercontent.com/I2PS-Engineering/ZTM_X/main/assets/gui/ztm-special-ops-x-benchmark-demo.png)
+
+*Special Ops X — interface demonstration. The displayed values are example UI data, not a qualified physical-machine measurement.*
 
 ---
 
 **I2PS Engineering**  
-*Built in Morocco, Engineered in the future.*
-
-## ZTM Special Ops X GUI
-
-![ZTM Special Ops X Benchmark interface showing sample processor measurements and telemetry](assets/gui/ztm-special-ops-x-benchmark-demo.png)
-
-*ZTM Special Ops X — Benchmark interface demonstration with illustrative telemetry. Not a real-machine qualification report.*
+*Built in Morocco, Engineered in the future.*  
+*Technology that empowers.*
